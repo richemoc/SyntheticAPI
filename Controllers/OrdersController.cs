@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SyntheticApi.DTOs;
 using SyntheticApi.Models;
@@ -8,11 +9,13 @@ namespace SyntheticApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
+[Authorize]
 public class OrdersController(IOrderService service) : ControllerBase
 {
     /// <summary>Get all orders.</summary>
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await service.GetAllAsync());
+    public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 50) =>
+        Ok(await service.GetAllAsync(page, pageSize));
 
     /// <summary>Get a single order by ID.</summary>
     [HttpGet("{id:int}")]
