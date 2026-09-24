@@ -78,3 +78,4 @@ dotnet run
   "stock": 45
 }
 ```
+# SyntheticAPI
