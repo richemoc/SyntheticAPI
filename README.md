@@ -5,7 +5,7 @@ A synthetic .NET 8 Web API demonstrating clean architecture patterns with Produc
 ## Tech Stack
 
 - **.NET 8** — ASP.NET Core Web API
-- **Entity Framework Core 8** — ORM with In-Memory provider (swap for SQL Server/Postgres easily)
+- **Entity Framework Core 8** — ORM with SQLite (configure another relational provider for production)
 - **Swagger / OpenAPI** — auto-generated docs at `/swagger`
 
 ## Project Structure
@@ -34,8 +34,16 @@ SyntheticApi/
 
 ```bash
 dotnet restore
-dotnet run
+dotnet run --environment Development
 # Open: https://localhost:5001/swagger
+```
+
+Set `Jwt:Key` through an environment variable or another secure configuration provider before starting the API. The default database connection is `ConnectionStrings:Default`; override it for deployment rather than committing credentials.
+
+Run the security regression tests with:
+
+```bash
+dotnet test SyntheticAPI.Tests/SyntheticAPI.Tests.csproj
 ```
 
 ## API Endpoints
@@ -43,19 +51,20 @@ dotnet run
 ### Products
 | Method | Route | Description |
 |--------|-------|-------------|
-| GET | `/api/products` | List all (filter by `?category=`) |
+| GET | `/api/products` | List active products (filter by `?category=`, `?page=`, `?pageSize=`) |
 | GET | `/api/products/{id}` | Get by ID |
 | POST | `/api/products` | Create product |
 | PATCH | `/api/products/{id}` | Partial update |
 | DELETE | `/api/products/{id}` | Soft delete |
+| POST | `/api/products/{id}/restore` | Restore (admin only) |
 
 ### Orders
 | Method | Route | Description |
 |--------|-------|-------------|
-| GET | `/api/orders` | List all orders |
+| GET | `/api/orders` | List orders (use `?page=` and `?pageSize=`) |
 | GET | `/api/orders/{id}` | Get by ID |
 | POST | `/api/orders` | Place order (validates stock) |
-| PATCH | `/api/orders/{id}/status` | Update status |
+| PATCH | `/api/orders/{id}/status` | Update status (admin only) |
 
 ## Sample Payloads
 

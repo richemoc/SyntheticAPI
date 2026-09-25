@@ -51,6 +51,7 @@ public class OrderService(AppDbContext db, ILogger<OrderService> logger) : IOrde
         if (dto.Items is null || !dto.Items.Any())
             return (null, "Order must contain at least one item.");
 
+        await using var transaction = await db.Database.BeginTransactionAsync();
         var order = new Order
         {
             CustomerName = dto.CustomerName.Trim(),
@@ -86,6 +87,7 @@ public class OrderService(AppDbContext db, ILogger<OrderService> logger) : IOrde
 
         db.Orders.Add(order);
         await db.SaveChangesAsync();
+        await transaction.CommitAsync();
 
         logger.LogInformation("Order {OrderId} created for {CustomerEmail}", order.Id, order.CustomerEmail);
         return (ToDto(order), null);

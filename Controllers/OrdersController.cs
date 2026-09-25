@@ -36,6 +36,7 @@ public class OrdersController(IOrderService service) : ControllerBase
 
     /// <summary>Update order status.</summary>
     [HttpPatch("{id:int}/status")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] OrderStatus status)
     {
         var updated = await service.UpdateStatusAsync(id, status);
